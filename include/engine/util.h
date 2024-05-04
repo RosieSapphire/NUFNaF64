@@ -14,7 +14,4 @@
 	X = malloc(ROM_SIZE(X)); \
 	nuPiReadRom(ROM_START(X), X, ROM_SIZE(X));
 
-void timer_print(u64 start, u64 head);
-void framerate_print(u64 last, u64 now);
-
 #endif /* _ENGINE_UTIL_H_ */

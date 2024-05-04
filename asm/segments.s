@@ -2,7 +2,7 @@
 
 .section .data
 
-glabel _freddySegmentRomStart
-.incbin "assets/freddy.ci8.bin"
+glabel _title_freddyface_0SegmentRomStart
+.incbin "assets/title_freddyface_0.ci8.bin"
 .balign 16
-glabel _freddySegmentRomEnd
+glabel _title_freddyface_0SegmentRomEnd

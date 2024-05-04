@@ -6,7 +6,7 @@
 #include "engine/heap.h"
 #include "engine/config.h"
 
-#include "game/stage00.h"
+#include "game/title.h"
 
 void mainproc(void)
 {
@@ -17,8 +17,8 @@ void mainproc(void)
 	nuPiInit();
 	InitHeap(heap, HEAP_SIZE);
 
-	stage00_init();
-	nuGfxFuncSet((NUGfxFunc)stage00_callback);
+	title_init();
+	nuGfxFuncSet((NUGfxFunc)title_callback);
 	nuGfxDisplayOn();
 
 	while (1)
