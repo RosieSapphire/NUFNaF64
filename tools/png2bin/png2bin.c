@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#define DEBUG 0
+
 #include "textype.h"
 
 static unsigned short tex_type;
@@ -58,6 +60,13 @@ static void ci8_convert_and_write(const char *inpath, const char *outpath)
 	/* convert */
 	int w, h, c;
 	stbi_uc *pixels_in = stbi_load(inpath, &w, &h, &c, 4);
+
+	if (!pixels_in)
+	{
+		fprintf(stderr, "Failed to load '%s' into STBImage.\n", inpath);
+		exit(EXIT_FAILURE);
+	}
+
 	unsigned short *pixels_conv = malloc(w * h * sizeof(*pixels_conv));
 	unsigned char tlut_size = 0;
 	unsigned short *tlut = malloc(0);
@@ -74,13 +83,7 @@ static void ci8_convert_and_write(const char *inpath, const char *outpath)
 				(go << 6) | (bo << 1) | (ao << 0));
 
 		if (!i)
-		{
-			tlut = realloc(tlut, ++tlut_size * sizeof(*tlut));
-			tlut[tlut_size - 1] = pixels_conv[i];
-			indis[i] = i;
-
-			continue;
-		}
+			goto add_new;
 
 		int tlut_size_last = tlut_size;
 		int tlut_found_color = 0;
@@ -95,36 +98,42 @@ static void ci8_convert_and_write(const char *inpath, const char *outpath)
 			}
 		}
 
-		if (tlut_found_color)
-			continue;
+#if DEBUG
+		printf("%d (%dx%d): 0x%.4X ", i,
+		       i % w, i / w, pixels_conv[i]);
+#endif
 
+		if (tlut_found_color)
+		{
+#if DEBUG
+			printf("\n");
+#endif
+			continue;
+		}
+
+#if DEBUG
+		printf("NEW COLOR! (found %d)\n", tlut_size + 1);
+#endif
+
+add_new:
 		tlut = realloc(tlut, ++tlut_size * sizeof(*tlut));
+		if (!tlut_size)
+		{
+			fprintf(stderr,
+				"'%s' ERROR: tlut_size rolled over 0xFF at "
+				"'%dx%d (%.2f%%)'\n", outpath,
+				i % w, i / w, ((float)i / (w * h)) * 100);
+			exit(EXIT_FAILURE);
+		}
+
 		tlut[tlut_size - 1] = pixels_conv[i];
 		indis[i] = tlut_size - 1;
 	}
 
+#if DEBUG
 	printf("'%s': tlut_size=%d dimensions=(%dx%d)\n",
 	       outpath, tlut_size, w, h);
-	/*
-	printf("tlut:\n");
-	for (int i = 0; i < tlut_size; i++)
-	{
-		if (i && !(i & 7))
-			putc('\n', stdout);
-
-		printf("0x%.4X ", tlut[i]);
-	}
-	putc('\n', stdout);
-	printf("\nindis:\n");
-	for (int i = 0; i < w * h; i++)
-	{
-		if (!(i % w) && i)
-			putc('\n', stdout);
-
-		printf("0x%.2X ", indis[i]);
-	}
-	putc('\n', stdout);
-	*/
+#endif
 
 	stbi_image_free(pixels_in);
 	free(pixels_conv);

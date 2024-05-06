@@ -71,13 +71,13 @@ LIBS += -L$(N64_LIBGCCDIR) -lgcc
 ifeq ($(DEBUG),1)
 	OPT    := -O0 -g3
 else
-	OPT    := -Os
+	OPT    := -Ofast
 endif
 CSTD           := -Wall -Wextra -Werror -pedantic -std=c99
 INCLUDE_DIRS   := /usr/include/n64 /usr/include/n64/PR \
 		  /usr/include/n64/nusys /usr/include/n64/nustd \
 		  tools include
-DEFINES        := DEBUG=$(DEBUG) F3DEX_GBI_2=$(DEBUG) NU_DEBUG=$(DEBUG)
+DEFINES        := DEBUG=$(DEBUG) F3DEX_GBI_2=1 NU_DEBUG=$(DEBUG)
 DEF_INC_CFLAGS := $(foreach i,$(INCLUDE_DIRS),-I$(i)) \
 		  $(foreach d,$(DEFINES),-D$(d))
 CFLAGS         := -G 0 $(OPT) -mabi=32 -ffreestanding -mfix4300 \
@@ -113,9 +113,6 @@ DUMMY != mkdir -p build/ $(addprefix build/,$(SRC_DIRS))
 assets/%.bin: assets/raw/%.png $(PNG2BIN)
 	$(call print,Converting:,$<,$@)
 	$(V)$(PNG2BIN) $< $@
-
-$(PNG2BIN):
-	make -C tools/png2bin/
 
 ##################
 # Compile C Code #

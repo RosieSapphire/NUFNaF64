@@ -23,15 +23,11 @@ static Gfx gfx_rcp_init_dl[] = {
 	gsSPTexture(0, 0, 0, 0x0, G_OFF),
 
 	/* RDP */
-	gsDPSetCycleType(G_CYC_1CYCLE),
 	gsDPPipelineMode(G_PM_1PRIMITIVE),
 	gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
-	gsDPSetCombineMode(G_CC_PRIMITIVE, G_CC_PRIMITIVE),
 	gsDPSetCombineKey(G_CK_NONE),
 	gsDPSetAlphaCompare(G_AC_NONE),
-	gsDPSetRenderMode(G_RM_NOOP, G_RM_NOOP2),
-	gsDPSetColorDither(G_CD_DISABLE),
-	gsDPSetColorDither(G_AD_DISABLE),
+	gsDPSetColorDither(G_CD_BAYER),
 	gsDPSetTextureFilter(G_TF_POINT),
 	gsDPSetTextureConvert(G_TC_FILT),
 	gsDPSetTexturePersp(G_TP_NONE),
@@ -58,7 +54,6 @@ void gfx_rect_fill(const s16 x, const s16 y, const u16 w, const u16 h,
 	gDPSetFillColor(glistp++, (GPACK_RGBA5551(r, g, b, 0x1) << 16 |
 			GPACK_RGBA5551(r, g, b, 0x1)));
 	gDPFillRectangle(glistp++, x, y, x + w - 1, y + h - 1);
-	gDPPipeSync(glistp++);
 }
 
 void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
@@ -80,6 +75,7 @@ void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
 	const int h   = height << TEX_MAG_LOG;
 
 	/* setup */
+	gDPPipeSync(glistp++);
 	gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 	gDPSetRenderMode(glistp++, G_RM_TEX_EDGE, G_RM_TEX_EDGE);
 	gDPSetTexturePersp(glistp++, G_TP_NONE);
@@ -171,7 +167,7 @@ void gfx_render_task(void)
 	gSPEndDisplayList(glistp++);
 	assert(glist_len < MAX_GFX_GLIST_SIZE);
 	nuGfxTaskStart(glist_cur, glist_len * sizeof(*glistp),
-		       NU_GFX_UCODE_F3DEX,
+		       NU_GFX_UCODE_F3DEX2,
 #if DEBUG
 		       NU_SC_NOSWAPBUFFER);
 #else

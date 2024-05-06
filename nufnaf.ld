@@ -149,10 +149,6 @@ SECTIONS
 	}
 	END_SEG(segments)
 #if DEBUG == 0
-	/*
-   	 * Discard everything not specifically mentioned above
-   	 * (ONLY IF DEBUGGING IS DISABLED!!!)
-   	 */
 	/DISCARD/ :
 	{
 		*(*);

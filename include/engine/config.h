@@ -1,6 +1,8 @@
 #ifndef _ENGINE_CONFIG_H_
 #define _ENGINE_CONFIG_H_
 
+#include "engine/util.h"
+
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
@@ -11,7 +13,7 @@
 
 #define TICKRATE 60
 #define DELTATIME (1.0f / TICKRATE)
-#define DELTACYCLES (OS_USEC_TO_CYCLES(SEC_TO_USEC(DELTATIME)))
+#define DELTACYCLES SEC_TO_CYCLES(DELTATIME)
 
 #define HEAP_SIZE 0x80000
 
