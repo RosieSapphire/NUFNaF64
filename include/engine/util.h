@@ -17,17 +17,4 @@
 	DST = malloc(ROM_SIZE(SRC)); \
 	nuPiReadRom(ROM_START(SRC), DST, ROM_SIZE(SRC));
 
-#if DEBUG
-#define DEBCON_PRINTF(X, Y, FMT, ARG) \
-{ \
-	char conbuf[128]; \
-	\
-	nuDebConTextPos(0, X, Y); \
-	sprintf(conbuf, FMT, ARG); \
-	nuDebConCPuts(0, conbuf); \
-}
-#else
-#define DEBCON_PRINTF(X, Y, FMT, ARG)
-#endif
-
 #endif /* _ENGINE_UTIL_H_ */

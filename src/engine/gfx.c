@@ -35,9 +35,6 @@ static Gfx gfx_rcp_init_dl[] = {
 	gsSPEndDisplayList(),
 };
 
-static Gfx gfx_cfb_clear_dl[] = {
-};
-
 void gfx_rcp_init(void)
 {
 	gSPSegment(glistp++, 0, 0x0);
@@ -56,7 +53,8 @@ void gfx_rect_fill(const s16 x, const s16 y, const u16 w, const u16 h,
 	gDPFillRectangle(glistp++, x, y, x + w - 1, y + h - 1);
 }
 
-void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
+void gfx_sprite_draw_primblend(const s16 x, const s16 y, const u8 *spr,
+			       const u8 r, const u8 g, const u8 b, const u8 a)
 {
 	/* all */
 	u16 type      = *((u16 *)spr);
@@ -79,7 +77,15 @@ void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
 	gDPSetCycleType(glistp++, G_CYC_1CYCLE);
 	gDPSetRenderMode(glistp++, G_RM_TEX_EDGE, G_RM_TEX_EDGE);
 	gDPSetTexturePersp(glistp++, G_TP_NONE);
-	gDPSetCombineMode(glistp++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+	if (a)
+	{
+		gDPSetCombineMode(glistp++, G_CC_MODULATERGBA_PRIM,
+				  G_CC_MODULATERGBA_PRIM);
+	}
+	else
+	{
+		gDPSetCombineMode(glistp++, G_CC_DECALRGBA, G_CC_DECALRGBA);
+	}
 	if (type == TEXTYPE_CI8)
 	{
 		gDPSetTextureLUT(glistp++, G_TT_RGBA16);
@@ -114,6 +120,11 @@ void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
 						 G_TX_NOMASK, G_TX_NOMASK,
 						 G_TX_NOLOD, G_TX_NOLOD);
 				break;
+			}
+			if (a)
+			{
+				gDPSetPrimColor(glistp++, 0, 0,
+						r * a, g * a, b * a, 0xFF);
 			}
 			gSPTextureRectangle(glistp++,
 					    (x) << 2, (y + i) << 2,
@@ -156,6 +167,11 @@ void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
 	/* cleanup */
 	gDPPipeSync(glistp++);
 	gDPSetTextureLUT(glistp++, G_TT_NONE);
+}
+
+void gfx_sprite_draw(const s16 x, const s16 y, const u8 *spr)
+{
+	gfx_sprite_draw_primblend(x, y, spr, 0x00, 0x00, 0x00, 0x00);
 }
 
 void gfx_render_task(void)

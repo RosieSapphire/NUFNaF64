@@ -19,4 +19,6 @@
 
 #define TEX_MAG_LOG 1
 
+#define DEBCONVARS_MAX 32
+
 #endif /* _ENGINE_CONFIG_H_ */

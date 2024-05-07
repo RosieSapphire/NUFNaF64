@@ -6,6 +6,7 @@
 #include "engine/timer.h"
 #include "engine/gfx.h"
 #include "engine/segments.h"
+#include "engine/debcon.h"
 
 #include "game/title.h"
 
@@ -20,9 +21,9 @@
 static OSTime start;
 static OSTime now;
 
-static int freddyface_state;
+static u8 freddyface_state;
 static timer_t freddyface_state_timer;
-static int freddyface_flicker;
+static u8 freddyface_flicker;
 static timer_t freddyface_flicker_timer;
 
 /* sprites */
@@ -40,6 +41,15 @@ void title_init(void)
 	ROM_READ(freddyfaces[2], title_freddyface_2);
 	ROM_READ(freddyfaces[3], title_freddyface_3);
 	start = osGetTime();
+
+	/* setup debug variables */
+	debcon_var_push("Freddy Face Flicker",
+			DCV_TYPE_U8, &freddyface_flicker);
+	debcon_var_push("Freddy Face Flicker Timer", DCV_TYPE_TIMER,
+			&freddyface_flicker_timer.cur);
+	debcon_var_push("Freddy Face State", DCV_TYPE_U8, &freddyface_state);
+	debcon_var_push("Freddy Face State Timer", DCV_TYPE_TIMER,
+			&freddyface_state_timer.cur);
 }
 
 static void title_update(void)
@@ -51,7 +61,7 @@ static void title_update(void)
 		freddyface_flicker = RAND(FREDDYFACE_FLICKER_RAND_MAX);
 }
 
-static void title_draw(void)
+static void title_draw(const OSTime cyc_frame)
 {
 	int freddyface_state_clamped =
 		freddyface_state < FREDDYFACE_STATE_CNT ? freddyface_state : 0;
@@ -59,7 +69,9 @@ static void title_draw(void)
 	glistp = glist[glist_task];
 	gfx_rcp_init();
 	gfx_rect_fill(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x0, 0x0, 0x0);
-	gfx_sprite_draw(0, 0, freddyfaces[freddyface_state_clamped]);
+	/* gfx_sprite_draw(0, 0, freddyfaces[freddyface_state_clamped]); */
+	gfx_sprite_draw_primblend(0, 0, freddyfaces[freddyface_state_clamped],
+				  0xFF, 0xFF, 0xFF, freddyface_flicker);
 	gfx_render_task();
 
 #if !DEBUG
@@ -68,10 +80,7 @@ static void title_draw(void)
 
 	nuDebConClear(0);
 
-	DEBCON_PRINTF(1, 26, "Freddy Face State: %d", freddyface_state);
-	DEBCON_PRINTF(1, 27, "Freddy Face State Timer: %f",
-		      CYCLES_TO_SEC(freddyface_state_timer.cur));
-	DEBCON_PRINTF(1, 28, "Scene Timer: %.3f", CYCLES_TO_SEC(now - start));
+	debcon_print_all();
 
 	nuDebConDisp(NU_SC_SWAPBUFFER);
 }
@@ -96,7 +105,7 @@ void title_callback(int pending_gfx_cnt)
 	/* const f32 subtick = (f32)cyc_accum / DELTACYCLES; */
 
 	if (pending_gfx_cnt < NUM_GFX_TASKS)
-		title_draw();
+		title_draw(cyc_frame);
 
 	cyc_last = now;
 }
