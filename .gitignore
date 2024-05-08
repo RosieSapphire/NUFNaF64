@@ -1,0 +1,4 @@
+assets/
+build/
+compile_commands.json
+tools/png2bin/png2bin
