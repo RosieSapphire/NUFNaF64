@@ -3,7 +3,9 @@
 
 #include <ultra64.h>
 
+#define CLAMP(X, MINI, MAXI) (MAX(MIN(X, MAXI), MINI))
 #define ABS(X) (X < 0 ? X * -1 : X)
+
 #define SEC_TO_USEC(X) ((OSTime)(X * 1000000))
 #define USEC_TO_SEC(X) ((f32)X / 1000000.0f)
 #define CYCLES_TO_SEC(X) ((f32)USEC_TO_SEC(OS_CYCLES_TO_USEC((OSTime)X)))

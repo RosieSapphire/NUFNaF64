@@ -9,7 +9,8 @@
 #define MAX_GFX_GLIST_SIZE 4096
 #define NUM_GFX_TASKS 3
 
-#define STICK_DEADZONE 8
+#define STICK_DEADZONE 2
+#define STICK_MAX 85
 
 #define TICKRATE 60
 #define DELTATIME (1.0f / TICKRATE)

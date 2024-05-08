@@ -127,10 +127,11 @@ void gfx_sprite_draw_primblend(const s16 x, const s16 y, const u8 *spr,
 						r * a, g * a, b * a, 0xFF);
 			}
 			gSPTextureRectangle(glistp++,
-					    (x) << 2, (y + i) << 2,
-					    (x + w) << 2, (y + i + 1) << 2,
+					    MAX(x, 0) << 2, (y + i) << 2,
+					    (MAX(x, 0) + MIN(w, 640)) << 2,
+					    (y + i + 1) << 2,
 					    G_TX_RENDERTILE,
-					    0 << 5, i << 5,
+					    (0 - MIN(x, 0)) << 5, i << 5,
 					    1 << 10, 1 << 10);
 		}
 	}

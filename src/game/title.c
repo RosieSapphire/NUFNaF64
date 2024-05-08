@@ -7,6 +7,8 @@
 #include "engine/gfx.h"
 #include "engine/segments.h"
 #include "engine/debcon.h"
+#include "engine/scene.h"
+#include "engine/input.h"
 
 #include "game/title.h"
 
@@ -40,7 +42,6 @@ void title_init(void)
 	ROM_READ(freddyfaces[1], title_freddyface_1);
 	ROM_READ(freddyfaces[2], title_freddyface_2);
 	ROM_READ(freddyfaces[3], title_freddyface_3);
-	start = osGetTime();
 
 	/* setup debug variables */
 	debcon_var_push("Freddy Face Flicker",
@@ -50,10 +51,21 @@ void title_init(void)
 	debcon_var_push("Freddy Face State", DCV_TYPE_U8, &freddyface_state);
 	debcon_var_push("Freddy Face State Timer", DCV_TYPE_TIMER,
 			&freddyface_state_timer.cur);
+
+	start = osGetTime();
 }
 
 static void title_update(void)
 {
+	nuContDataGetEx(&input_data, 0);
+	if (input_data.trigger & START_BUTTON)
+	{
+		scene_index = SCENE_GAME;
+		title_terminate();
+		nuGfxFuncRemove();
+		return;
+	}
+
 	if (timer_tick(&freddyface_state_timer))
 		freddyface_state = RAND(FREDDYFACE_STATE_RAND_MAX);
 
@@ -69,7 +81,6 @@ static void title_draw(const OSTime cyc_frame)
 	glistp = glist[glist_task];
 	gfx_rcp_init();
 	gfx_rect_fill(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0x0, 0x0, 0x0);
-	/* gfx_sprite_draw(0, 0, freddyfaces[freddyface_state_clamped]); */
 	gfx_sprite_draw_primblend(0, 0, freddyfaces[freddyface_state_clamped],
 				  0xFF, 0xFF, 0xFF, freddyface_flicker);
 	gfx_render_task();
@@ -79,13 +90,11 @@ static void title_draw(const OSTime cyc_frame)
 #endif
 
 	nuDebConClear(0);
-
 	debcon_print_all();
-
 	nuDebConDisp(NU_SC_SWAPBUFFER);
 }
 
-void title_callback(int pending_gfx_cnt)
+void title_callback(long unsigned int pending_gfx_cnt)
 {
 	static OSTime cyc_last;
 	static OSTime cyc_accum;
@@ -108,4 +117,13 @@ void title_callback(int pending_gfx_cnt)
 		title_draw(cyc_frame);
 
 	cyc_last = now;
+}
+
+void title_terminate(void)
+{
+	free(freddyfaces[0]);
+	free(freddyfaces[1]);
+	free(freddyfaces[2]);
+	free(freddyfaces[3]);
+	debcon_var_pop_all();
 }
