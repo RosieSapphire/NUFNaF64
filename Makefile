@@ -99,6 +99,9 @@ OBJCOPY   := $(CRASH95BINDIR)/mips-n64-objcopy
 
 default: $(PNG2BIN) $(BIN_FILES) $(ROM)
 
+$(PNG2BIN):
+	make -C tools/png2bin/
+
 clean:
 	rm -rf build/ assets/*.bin
 
