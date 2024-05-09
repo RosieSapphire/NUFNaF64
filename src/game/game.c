@@ -73,7 +73,7 @@ static void game_draw(void)
 	nuDebConDisp(NU_SC_SWAPBUFFER);
 }
 
-void game_callback(long unsigned int pending_gfx_cnt)
+void game_callback(unsigned long pending_gfx_cnt)
 {
 	static OSTime cyc_last;
 	static OSTime cyc_accum;

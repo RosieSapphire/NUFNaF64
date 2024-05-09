@@ -174,8 +174,8 @@ print-% : ; $(info $* is a $(flavor $*) variable set to [$($*)]) @true
 ###############################################
 BETTY_SCAN:=$(wildcard src/*.c src/engine/*.c src/game/*.c \
 	    include/*.h include/engine/*.h include/game/*.h)
-BETTY_FLAGS:=-strict -subjective --allow-global-variables
-BETTY_IGNORE:=--ignore=CAMELCASE
+BETTY_FLAGS:=-strict -subjective --allow-global-variables --show-types
+BETTY_IGNORE:=--ignore=CAMELCASE,VOLATILE,FUNCTIONS
 
 betty:
 	betty-style $(BETTY_SCAN) $(BETTY_FLAGS) $(BETTY_IGNORE)

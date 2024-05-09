@@ -94,7 +94,7 @@ static void title_draw(const OSTime cyc_frame)
 	nuDebConDisp(NU_SC_SWAPBUFFER);
 }
 
-void title_callback(long unsigned int pending_gfx_cnt)
+void title_callback(unsigned long pending_gfx_cnt)
 {
 	static OSTime cyc_last;
 	static OSTime cyc_accum;

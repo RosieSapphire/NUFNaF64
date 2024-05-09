@@ -16,7 +16,9 @@
 #define ROM_SIZE(X) (ROM_END(X) - ROM_START(X))
 
 #define ROM_READ(DST, SRC) \
-	DST = malloc(ROM_SIZE(SRC)); \
-	nuPiReadRom(ROM_START(SRC), DST, ROM_SIZE(SRC));
+	do { \
+		DST = malloc(ROM_SIZE(SRC)); \
+		nuPiReadRom(ROM_START(SRC), DST, ROM_SIZE(SRC)); \
+	} while (0)
 
 #endif /* _ENGINE_UTIL_H_ */

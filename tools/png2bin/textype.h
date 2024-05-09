@@ -8,9 +8,4 @@ enum
 	TEXTYPE_CNT,
 };
 
-const char *textype_strs[TEXTYPE_CNT] = {
-	"rgba16",
-	"ci8",
-};
-
 #endif /* _PNG2BIN_TEXTYPE_H_ */

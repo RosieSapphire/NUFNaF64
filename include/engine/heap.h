@@ -7,6 +7,6 @@
 
 extern u8 heap[HEAP_SIZE];
 
-extern int InitHeap(void *start, unsigned int size);
+int InitHeap(void *start, unsigned int size);
 
 #endif /* _ENGINE_HEAP_H_ */

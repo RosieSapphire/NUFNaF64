@@ -180,6 +180,10 @@ int main(int argc, char **argv)
 
 	for (int i = 0; i < TEXTYPE_CNT; i++)
 	{
+		static const char *textype_strs[TEXTYPE_CNT] = {
+			"rgba16", "ci8",
+		};
+
 		if (!(str = strstr(argv[1], textype_strs[i])))
 			continue;
 
@@ -207,7 +211,6 @@ int main(int argc, char **argv)
 	case TEXTYPE_CI8:
 		ci8_convert_and_write(argv[1], argv[2]);
 		return (0);
-	
 
 	default:
 		fprintf(stderr, "'%s' is not any "

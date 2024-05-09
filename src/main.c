@@ -41,7 +41,8 @@ void mainproc(void)
 			break;
 		}
 
-		while (scene_index == SCENE_NONE);
+		while (scene_index == SCENE_NONE)
+		{}
 		nuGfxDisplayOff();
 	}
 }
