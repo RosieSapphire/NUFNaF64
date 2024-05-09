@@ -1,3 +1,5 @@
+.cache/
+.checkpatch*
 assets/
 build/
 compile_commands.json
